@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="mobile-web-app-capable" content="yes">
     <title>Be My Valentine? 💕</title>
     <style>
         * {
@@ -31,7 +30,6 @@
             height: -webkit-fill-available;
         }
 
-        /* Floating hearts animation */
         .heart {
             position: absolute;
             font-size: 2em;
@@ -95,7 +93,7 @@
         .gif-container img {
             max-width: 100%;
             width: 100%;
-            max-width: 300px;
+            max-width: 350px;
             height: auto;
             border-radius: 15px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
@@ -194,11 +192,11 @@
             cursor: pointer;
             font-weight: bold;
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            animation: bounce 2s infinite;
+            animation: buttonBounce 2s infinite;
             touch-action: manipulation;
         }
 
-        @keyframes bounce {
+        @keyframes buttonBounce {
             0%, 100% {
                 transform: translateY(0);
             }
@@ -236,7 +234,6 @@
             line-height: 1.6;
         }
 
-        /* Tablet and larger screens */
         @media (min-width: 768px) {
             .container {
                 padding: 40px 60px;
@@ -248,7 +245,6 @@
             }
         }
 
-        /* Prevent zoom on double tap for iOS */
         button {
             touch-action: manipulation;
         }
@@ -261,9 +257,9 @@
         <button class="start-btn" onclick="startExperience()">Tap Here!</button>
     </div>
 
-    <!-- Background music -->
+    <!-- Background music - CHANGE "music.mp3" to your music filename -->
     <audio id="bgMusic" loop>
-        <source src="https://cdn.pixabay.com/download/audio/2022/03/10/audio_4a456e1d7b.mp3" type="audio/mpeg">
+        <source src="music.mp3" type="audio/mpeg">
     </audio>
 
     <div class="music-control" id="musicToggle" onclick="toggleMusic()">
@@ -273,7 +269,8 @@
     <div class="container" id="mainContainer">
         <h1>Will you be my Valentine? 💝</h1>
         <div class="gif-container">
-            <img id="mainGif" src="https://media1.tenor.com/m/SdsLsKJSKnAAAAAC/love-hearts.gif" alt="Cute anime asking">
+            <!-- CHANGE "asking.gif" to your main GIF filename -->
+            <img id="mainGif" src="asking.gif" alt="Cute anime asking">
         </div>
         <div class="buttons">
             <button id="yesBtn">Yes! 💕</button>
@@ -282,14 +279,12 @@
     </div>
 
     <script>
-        // Prevent pull-to-refresh on mobile
         document.body.addEventListener('touchmove', function(e) {
             if (e.target.tagName !== 'BUTTON') {
                 e.preventDefault();
             }
         }, { passive: false });
 
-        // Start experience (required for mobile audio)
         function startExperience() {
             const startScreen = document.getElementById('startScreen');
             const bgMusic = document.getElementById('bgMusic');
@@ -300,11 +295,9 @@
             });
             musicPlaying = true;
             
-            // Start heart animations
             heartInterval = setInterval(createHeart, 300);
         }
 
-        // Create floating hearts
         let heartInterval;
         function createHeart() {
             const heart = document.createElement('div');
@@ -320,7 +313,6 @@
             }, 6000);
         }
 
-        // Music control
         const bgMusic = document.getElementById('bgMusic');
         const musicToggle = document.getElementById('musicToggle');
         let musicPlaying = false;
@@ -346,54 +338,50 @@
         
         let noClickCount = 0;
 
-        // Different anime GIFs for each "no" attempt
+        // CHANGE these filenames to match your downloaded GIFs
         const pleadingGifs = [
-            'https://media1.tenor.com/m/SdsLsKJSKnAAAAAC/love-hearts.gif',
-            'https://media1.tenor.com/m/q1RyV_-I2WkAAAAC/anime-love.gif',
-            'https://media1.tenor.com/m/0DuGom3uT1IAAAAC/please-pretty-please.gif',
-            'https://media1.tenor.com/m/KMSpo9DiitsAAAAC/anime-puppy-eyes.gif',
-            'https://media1.tenor.com/m/vxMb4C8H_ksAAAAC/anime-cry.gif'
+            'asking.gif',      // Initial GIF
+            'pleading1.gif',   // After 1st "no"
+            'pleading2.gif',   // After 2nd "no"
+            'pleading3.gif',   // After 3rd "no"
+            'pleading1.gif',   // Repeat if needed
+            'pleading2.gif'    // Repeat if needed
         ];
 
         yesBtn.addEventListener('click', () => {
+            // CHANGE "celebration.gif" to your celebration GIF filename
             container.innerHTML = `
                 <div class="success-message">
                     <h1>Yay! 🎉💕</h1>
                     <div class="gif-container">
-                        <img src="https://media1.tenor.com/m/hzWN0bJTln8AAAAC/love-cute.gif" alt="Happy celebration">
+                        <img src="celebration.gif" alt="Happy celebration">
                     </div>
                     <p class="celebration">I love you so much! 💖<br>Happy Valentine's Day! 🌹✨</p>
                 </div>
             `;
             
-            // Celebration effect
             for (let i = 0; i < 50; i++) {
                 setTimeout(createHeart, i * 100);
             }
         });
 
-        // Mobile-friendly no button behavior
         function moveNoButton() {
             noClickCount++;
             
-            // Change GIF to show more pleading
             const gifIndex = Math.min(noClickCount, pleadingGifs.length - 1);
             mainGif.src = pleadingGifs[gifIndex];
             
-            // Make yes button bigger
             const currentFontSize = parseFloat(window.getComputedStyle(yesBtn).fontSize);
             yesBtn.style.fontSize = (currentFontSize + 3) + 'px';
             const currentPaddingV = 15 + noClickCount * 2;
             const currentPaddingH = 30 + noClickCount * 3;
             yesBtn.style.padding = currentPaddingV + 'px ' + currentPaddingH + 'px';
             
-            // Make no button smaller
             const newFontSize = Math.max(0.5, 1.2 - noClickCount * 0.15);
             const newPadding = Math.max(3, 15 - noClickCount * 2);
             noBtn.style.fontSize = newFontSize + 'em';
             noBtn.style.padding = newPadding + 'px ' + (newPadding * 2) + 'px';
             
-            // Move no button to random position (accounting for mobile screen)
             const btnRect = noBtn.getBoundingClientRect();
             const maxX = window.innerWidth - btnRect.width - 20;
             const maxY = window.innerHeight - btnRect.height - 20;
@@ -404,13 +392,11 @@
             noBtn.style.left = randomX + 'px';
             noBtn.style.top = randomY + 'px';
 
-            // After 5 attempts, make it even harder
             if (noClickCount > 5) {
                 noBtn.style.opacity = Math.max(0.3, 1 - (noClickCount - 5) * 0.1);
             }
         }
 
-        // Handle both mouse and touch events
         noBtn.addEventListener('mouseover', moveNoButton);
         noBtn.addEventListener('touchstart', function(e) {
             e.preventDefault();
@@ -422,14 +408,12 @@
             moveNoButton();
         });
 
-        // Position no button initially (mobile friendly)
         function positionNoButton() {
             const containerRect = container.getBoundingClientRect();
             noBtn.style.left = (containerRect.right - 150) + 'px';
             noBtn.style.top = (containerRect.bottom - 80) + 'px';
         }
 
-        // Position after page loads
         window.addEventListener('load', positionNoButton);
         window.addEventListener('resize', positionNoButton);
     </script>
